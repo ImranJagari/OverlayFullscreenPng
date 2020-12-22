@@ -27,6 +27,11 @@ namespace OverlayFullscreenPng
         {
             InitializeComponent();
 
+            Shown += Form1_Shown;
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
             if (File.Exists(SaveFilename))
             {
                 var dataLines = File.ReadAllLines(SaveFilename);
@@ -37,17 +42,17 @@ namespace OverlayFullscreenPng
                 var modifierKey = Keys.None;
                 switch (_modifier)
                 {
-                    case KeyModifier.WinKey :
+                    case KeyModifier.WinKey:
                         modifierKey = Keys.LWin;
                         break;
                     case KeyModifier.Shift:
-                        modifierKey =  Keys.Shift;
+                        modifierKey = Keys.Shift;
                         break;
                     case KeyModifier.Control:
-                        modifierKey =  Keys.Control;
+                        modifierKey = Keys.Control;
                         break;
                     case KeyModifier.Alt:
-                        modifierKey =  Keys.Alt;
+                        modifierKey = Keys.Alt;
                         break;
                     default:
                         modifierKey = Keys.None;
