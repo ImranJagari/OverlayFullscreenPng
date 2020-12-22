@@ -15,6 +15,8 @@ namespace OverlayFullscreenPng
 {
     public partial class Form1 : Form
     {
+        public const string SaveFilename = "save.txt";
+
         private List<Keys> _modifers = new List<Keys>() { Keys.ControlKey, Keys.Alt, Keys.Menu, Keys.LWin, Keys.ShiftKey, Keys.LShiftKey, Keys.RShiftKey, Keys.LControlKey, Keys.RControlKey };
 
         private KeyModifier _modifier;
@@ -24,6 +26,45 @@ namespace OverlayFullscreenPng
         public Form1()
         {
             InitializeComponent();
+
+            if (File.Exists(SaveFilename))
+            {
+                var dataLines = File.ReadAllLines(SaveFilename);
+
+                filePathTxt.Text = dataLines[0];
+
+                Enum.TryParse(dataLines[1], out _modifier);
+                var modifierKey = Keys.None;
+                switch (_modifier)
+                {
+                    case KeyModifier.WinKey :
+                        modifierKey = Keys.LWin;
+                        break;
+                    case KeyModifier.Shift:
+                        modifierKey =  Keys.Shift;
+                        break;
+                    case KeyModifier.Control:
+                        modifierKey =  Keys.Control;
+                        break;
+                    case KeyModifier.Alt:
+                        modifierKey =  Keys.Alt;
+                        break;
+                    default:
+                        modifierKey = Keys.None;
+                        break;
+                }
+
+                Enum.TryParse(dataLines[2], out _key);
+                opacityNum.Value = int.Parse(dataLines[3]);
+
+                UpdateKeystrokesInput(modifierKey, _key);
+            }
+        }
+
+        private void WriteSaveFile()
+        {
+            File.WriteAllText(SaveFilename, $"{filePathTxt.Text}\n{_modifier}\n{_key}\n{opacityNum.Value}");
+            MessageBox.Show("Votre fichier de sauvegarde a bien été enregistré !");
         }
 
         private void findBtn_Click(object sender, EventArgs e)
@@ -51,6 +92,7 @@ namespace OverlayFullscreenPng
                 _key = Keys.Escape;
                 _modifier = KeyModifier.None;
             }
+
 
             _overlay = new OverlayForm(this, _key, _modifier, (int)opacityNum.Value);
             _overlay.BackgroundImage = Image.FromFile(filePathTxt.Text, true);
@@ -84,16 +126,22 @@ namespace OverlayFullscreenPng
             if (!_modifers.Contains(e.KeyCode))
             {
                 this.KeyPreview = false;
-                string keyString = string.Empty;
-                if (e.Modifiers != Keys.None)
-                    keyString = $"{e.Modifiers} + ";
-                keyString += e.KeyCode;
-
-                this.keystrokeBtn.Text = keyString;
+                UpdateKeystrokesInput(e.Modifiers, e.KeyCode);
 
                 lblWaitingForKS.Visible = false;
             }
         }
+
+        private void UpdateKeystrokesInput(Keys modifier, Keys keyCode)
+        {
+            string keyString = string.Empty;
+            if (modifier != Keys.None)
+                keyString = $"{modifier} + ";
+            keyString += keyCode;
+
+            this.keystrokeBtn.Text = keyString;
+        }
+
         public bool IsModifierKey(Keys keycode)
         {
             return (keycode & ModifierKeys) == Keys.Control || (keycode & ModifierKeys) == Keys.Shift || (keycode | ModifierKeys) == Keys.LWin || (keycode & ModifierKeys) == Keys.Alt;
@@ -104,6 +152,11 @@ namespace OverlayFullscreenPng
             this.KeyPreview = true;
             lblWaitingForKS.Visible = true;
             this.keystrokeBtn.Text = "...";
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            WriteSaveFile();
         }
     }
 }

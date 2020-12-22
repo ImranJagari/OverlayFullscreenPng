@@ -37,6 +37,7 @@
             this.lblWaitingForKS = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.opacityNum = new System.Windows.Forms.NumericUpDown();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.opacityNum)).BeginInit();
             this.SuspendLayout();
             // 
@@ -69,7 +70,7 @@
             // 
             // applyBtn
             // 
-            this.applyBtn.Location = new System.Drawing.Point(236, 162);
+            this.applyBtn.Location = new System.Drawing.Point(160, 162);
             this.applyBtn.Name = "applyBtn";
             this.applyBtn.Size = new System.Drawing.Size(75, 23);
             this.applyBtn.TabIndex = 3;
@@ -132,11 +133,22 @@
             0,
             0});
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(283, 162);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(79, 23);
+            this.button1.TabIndex = 10;
+            this.button1.Text = "Sauvegarder";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(573, 197);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.opacityNum);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.lblWaitingForKS);
@@ -167,6 +179,7 @@
         private System.Windows.Forms.Label lblWaitingForKS;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown opacityNum;
+        private System.Windows.Forms.Button button1;
     }
 }
 
