@@ -58,6 +58,8 @@ namespace OverlayFullscreenPng
                 opacityNum.Value = int.Parse(dataLines[3]);
 
                 UpdateKeystrokesInput(modifierKey, _key);
+
+                StartOverlay();
             }
         }
 
@@ -81,6 +83,11 @@ namespace OverlayFullscreenPng
 
         private void applyBtn_Click(object sender, EventArgs e)
         {
+            StartOverlay();
+        }
+
+        private void StartOverlay()
+        {
             if (string.IsNullOrWhiteSpace(filePathTxt.Text) || !File.Exists(filePathTxt.Text))
             {
                 MessageBox.Show("Vous n'avez pas choisi d'image overlay correcte !");
@@ -101,6 +108,7 @@ namespace OverlayFullscreenPng
 
             this.Hide();
         }
+
         protected override void OnKeyDown(KeyEventArgs e)
         {
             switch (e.Modifiers)
