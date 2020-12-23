@@ -22,15 +22,49 @@ namespace OverlayFullscreenPng
         private KeyModifier _modifier;
         private Keys _key;
 
+        private bool drag;
+        private Point startPoint;
+
         private OverlayForm _overlay;
         public Form1()
         {
             InitializeComponent();
 
+            this.startPoint = this.Location;
+
             Shown += Form1_Shown;
+            this.titleBarPicture.MouseUp += Title_MouseUp;
+            this.titleBarPicture.MouseDown += Title_MouseDown;
+            this.titleBarPicture.MouseMove += Title_MouseMove;
+
+            this.opacityNum.Controls[0].BackColor = this.opacityNum.Controls[1].BackColor;
         }
 
-        private void Form1_Shown(object sender, EventArgs e)
+        void Title_MouseUp(object sender, MouseEventArgs e)
+        {
+            this.drag = false;
+        }
+
+        void Title_MouseDown(object sender, MouseEventArgs e)
+        {
+            this.startPoint = e.Location;
+            this.drag = true;
+        }
+
+        void Title_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (this.drag)
+            { // if we should be dragging it, we need to figure out some movement
+                Point p1 = new Point(e.X, e.Y);
+                Point p2 = this.PointToScreen(p1);
+                Point p3 = new Point(p2.X - this.startPoint.X,
+                                     p2.Y - this.startPoint.Y);
+                this.Location = p3;
+            }
+        }
+
+
+private void Form1_Shown(object sender, EventArgs e)
         {
             if (File.Exists(SaveFilename))
             {
@@ -170,6 +204,16 @@ namespace OverlayFullscreenPng
         private void button1_Click(object sender, EventArgs e)
         {
             WriteSaveFile();
+        }
+
+        private void pictureBox3_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void pictureBox5_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
         }
     }
 }
