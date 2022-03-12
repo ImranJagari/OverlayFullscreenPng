@@ -16,7 +16,8 @@ namespace OverlayFullscreenPng
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Control.CheckForIllegalCrossThreadCalls = false;
+            Application.Run(new Main());
         }
     }
 }

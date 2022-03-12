@@ -16,11 +16,23 @@ namespace OverlayFullscreenPng
         [DllImport("user32.dll", SetLastError = true)]
         private static extern UInt32 GetWindowLong(IntPtr hWnd, int nIndex);
 
-        [DllImport("user32.dll")]
-        static extern int SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
         [DllImport("user32.dll")]
         static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
+
+        public static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
+        {
+            if (IntPtr.Size == 8)
+                return SetWindowLongPtr64(hWnd, nIndex, dwNewLong);
+            else
+                return new IntPtr(SetWindowLong32(hWnd, nIndex, dwNewLong.ToInt32()));
+        }
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
+        private static extern int SetWindowLong32(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
+        private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
         private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
         private static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
@@ -49,16 +61,16 @@ namespace OverlayFullscreenPng
         public const int LWA_ALPHA = 0x2;
         public const int LWA_COLORKEY = 0x1;
 
-        private Form _owner;
+        private Main _owner;
         private KeyHandler ghk;
 
-        public OverlayForm(Form owner, Keys key, KeyModifier modifier, int opacity)
+        public OverlayForm(Main owner, Keys key, KeyModifier modifier, int opacity)
         {
             this._owner = owner;
 
             InitializeComponent();
 
-            SetWindowLong(this.Handle, GWL_EXSTYLE, (IntPtr)(GetWindowLong(this.Handle, GWL_EXSTYLE) | WS_EX_LAYERED | WS_EX_TRANSPARENT));
+            SetWindowLongPtr(this.Handle, GWL_EXSTYLE, (IntPtr)(GetWindowLong(this.Handle, GWL_EXSTYLE) | WS_EX_LAYERED | WS_EX_TRANSPARENT));
             SetLayeredWindowAttributes(this.Handle, 0, (byte)((opacity / 100.0) * 255), LWA_ALPHA);
 
             ghk = new KeyHandler(key, modifier, this);
@@ -90,6 +102,7 @@ namespace OverlayFullscreenPng
         private void HandleHotkey()
         {
             this.Close();
+            _owner.desactived = true;
             _owner.Show();
         }
     }
